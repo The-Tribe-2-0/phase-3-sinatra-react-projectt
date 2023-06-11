@@ -107,8 +107,8 @@ const TodoList = () => {
             <div>
               <p>{todo.title}</p>
               <p>{todo.description}</p>
-              <p>{todo.date}</p>
-              <p>{todo.priority}</p>
+              <p>Date: {todo.date}</p>
+              <p>Priority: {todo.priority}</p>
               <button onClick={() => handleEdit(todo.id)}>Edit</button>
               <button onClick={() => handleDelete(todo.id)}>Delete</button>
             </div>
