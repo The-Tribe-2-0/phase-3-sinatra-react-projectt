@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
+  const [editedTodos, setEditedTodos] = useState({});
 
   useEffect(() => {
     fetchTodos();
@@ -30,8 +31,43 @@ const TodoList = () => {
   };
 
   const handleEdit = (id) => {
-    // Implement edit functionality here
-    console.log('Edit todo with id:', id);
+    setEditedTodos((prevEditedTodos) => ({
+      ...prevEditedTodos,
+      [id]: true,
+    }));
+  };
+
+  const handleSave = async (id, updatedTodo) => {
+    try {
+      await fetch(`http://localhost:9292/todos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTodo),
+      });
+      setEditedTodos((prevEditedTodos) => ({
+        ...prevEditedTodos,
+        [id]: false,
+      }));
+    } catch (error) {
+      console.error('Error updating todo:', error);
+    }
+  };
+
+  const handleInputChange = (id, event) => {
+    const { name, value } = event.target;
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            [name]: value,
+          };
+        }
+        return todo;
+      })
+    );
   };
 
   return (
@@ -39,9 +75,44 @@ const TodoList = () => {
       <h2>Todo List</h2>
       {todos.map((todo) => (
         <div key={todo.id}>
-          <p>{todo.title}</p>
-          <button onClick={() => handleEdit(todo.id)}>Edit</button>
-          <button onClick={() => handleDelete(todo.id)}>Delete</button>
+          {editedTodos[todo.id] ? (
+            <div>
+              <input
+                type="text"
+                name="title"
+                value={todo.title}
+                onChange={(event) => handleInputChange(todo.id, event)}
+              />
+              <input
+                type="text"
+                name="description"
+                value={todo.description}
+                onChange={(event) => handleInputChange(todo.id, event)}
+              />
+              <input
+                type="date"
+                name="date"
+                value={todo.date}
+                onChange={(event) => handleInputChange(todo.id, event)}
+              />
+              <input
+                type="text"
+                name="priority"
+                value={todo.priority}
+                onChange={(event) => handleInputChange(todo.id, event)}
+              />
+              <button onClick={() => handleSave(todo.id, todo)}>Save</button>
+            </div>
+          ) : (
+            <div>
+              <p>{todo.title}</p>
+              <p>{todo.description}</p>
+              <p>{todo.date}</p>
+              <p>{todo.priority}</p>
+              <button onClick={() => handleEdit(todo.id)}>Edit</button>
+              <button onClick={() => handleDelete(todo.id)}>Delete</button>
+            </div>
+          )}
         </div>
       ))}
     </div>
