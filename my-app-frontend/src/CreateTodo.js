@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './CreateTodo.css';
 
 const CreateTodo = () => {
   const [title, setTitle] = useState('');
