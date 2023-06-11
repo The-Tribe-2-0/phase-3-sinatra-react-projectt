@@ -5,12 +5,12 @@ class ApplicationController < Sinatra::Base
   get "/" do
     { message: "Good luck with your project!" }.to_json
   end
-  get '/api/todos' do
+  get '/todos' do
     todos = Todo.all
     todos.to_json
   end
 
-  post '/api/todos' do
+  post '/todos' do
     todo = Todo.new(title: params[:title], description: params[:description], category_id: params[:category_id])
     if todo.save
       todo.to_json
@@ -20,7 +20,7 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  patch '/api/todos/:id' do
+  patch '/todos/:id' do
     todo = Todo.find(params[:id])
     if todo.update(title: params[:title], description: params[:description], category_id: params[:category_id])
       todo.to_json
@@ -29,7 +29,7 @@ class ApplicationController < Sinatra::Base
       { error: 'Failed to update todo' }.to_json
     end
   end
-  delete '/api/todos/:id' do
+  delete '/todos/:id' do
     todo = Todo.find(params[:id])
     if todo.destroy
       { success: 'Todo deleted successfully' }.to_json
